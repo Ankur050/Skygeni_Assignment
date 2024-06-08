@@ -1,0 +1,70 @@
+#steps
+# open the jupyter notebook and import the csv file in it.
+# First perform the ETL over the dataset because it contains the invalid or inaccurate data 
+# Removing those datas where Age is 0 or -ve and Sex is empty fields
+
+# importing the library pandas and matplotlib 
+
+import pandas as pd    # giving shortcut name 
+import matplotlib.pyplot as mp
+
+# creating variable to read the file
+data=pd.read_csv('GRE_Reg_Data.csv')
+
+data=data[data['Age']>0] # removing the datas where age is 0 or -ve
+
+valid_sex=['M','F'] #keeping only those datas where Sex is M or F
+data=data[data['Sex'].isin(valid_sex)]
+
+# Convert 'time_occ' to string and pad with zeros to ensure all are 4 characters
+data['TIME OCC'] = data['TIME OCC'].astype(str).str.zfill(4)
+
+# Convert 'time_occ' to datetime.time format
+data['TIME OCC'] = pd.to_datetime(data['TIME OCC'], format='%H%M').dt.time
+
+# Extract the hour from 'time_occ'
+data['hour'] = pd.to_datetime(data['TIME OCC'], format='%H:%M:%S').dt.hour
+
+
+#question 1
+hour_freq=data['hour'].value_counts().sort_index()
+
+mp.figure(figsize=(12, 6))
+hour_freq.plot(kind='bar')
+mp.xlabel('Hour of the Day')
+mp.ylabel('Number of Candidates')
+mp.title('Frequency of Candidates Scheduled by Hour')
+mp.xticks(rotation=0)
+mp.show()
+
+#question 2
+
+
+day_hours = range(6, 22)  # 06:00 AM to 09:00 PM
+data['time_of_day'] = data['hour'].apply(lambda x: 'Day' if x in day_hours else 'Night')
+
+# Calculate the number of candidates for day and night
+day_night_frequency = data['time_of_day'].value_counts()
+
+# Plot the stacked bar graph
+mp.figure(figsize=(8, 6))
+day_night_frequency.plot(kind='bar', stacked=True, color=['orange', 'blue'])
+mp.xlabel('Time of Day')
+mp.ylabel('Number of Candidates')
+mp.title('Number of Candidates Taking Exam at Day and Night')
+mp.xticks(rotation=0)
+mp.show()
+
+# question 3
+
+
+# Define age bins and labels
+bins=[0,18,26,35,45,55,65,100]
+labels = ['0-17', '18-25', '26-34', '35-44', '45-54', '55-64', '65+']
+
+# Create a new column with age group labels
+data['age_group'] = pd.cut(data['Age'],bins=bins, labels=labels, right=False)
+
+# Count the frequency of each age group
+age_group_counts = data['age_group'].value_counts().sort_index()
+age_group_counts
