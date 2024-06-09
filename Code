@@ -39,21 +39,7 @@ mp.show()
 
 #question 2
 
-
-day_hours = range(6, 22)  # 06:00 AM to 09:00 PM
-data['time_of_day'] = data['hour'].apply(lambda x: 'Day' if x in day_hours else 'Night')
-
-# Calculate the number of candidates for day and night
-day_night_frequency = data['time_of_day'].value_counts()
-
-# Plot the stacked bar graph
-mp.figure(figsize=(8, 6))
-day_night_frequency.plot(kind='bar', stacked=True, color=['orange', 'blue'])
-mp.xlabel('Time of Day')
-mp.ylabel('Number of Candidates')
-mp.title('Number of Candidates Taking Exam at Day and Night')
-mp.xticks(rotation=0)
-mp.show()
+not done 
 
 # question 3
 
